@@ -30,10 +30,30 @@ app.get("/", (req, res) => {
 
 app.post("/user", async (req, res) => {
     try {
-        console.log(req.body)
-        res.json(await User.create(req.body));
+        res.json(await User.create(req.body))
     } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json(error)
+    }
+})
+
+app.put("/user/update", async (req, res) => {
+    try {
+        res.json(await User.findByIdAndUpdate(
+            req.body._id,
+            req.body
+        ))
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+
+app.get("/user", async (req, res) => {
+    try {
+        let data = res.json(await User.find({ email: req.query.emailParams }))
+        console.log(data)
+    } catch (error) {
+        res.status(400).json(error)
     }
 })
 
@@ -47,20 +67,32 @@ app.get("/products/search", async (req, res) => {
     }
 })
 
-app.get("/user", async (req, res) => {
+app.get("/products/:catId", async (req, res) => {
     try {
-        res.json(await User.find({ userId: req.query.userId }));
+        res.json(await Products.find({ categoryId: req.params.catId }))
     } catch (error) {
         res.status(400).json(error)
     }
 })
 
+app.get("/product/:id", async (req, res) => {
+    try {
+        console.log(req.params.id)
+        res.json(await Products.find({ productId: req.params.id }));
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+
+
 // Cart
 app.put("/cart", async (req, res) => {
+    console.log("cartObj", req.body)
     try {
-        if (req.body.userId) {
+        if (req.body.user) {
             let query = {
-                user: req.body.userId
+                user: req.body.user
             };
             let update = { products: req.body.products };
             let options = { upsert: true, new: true, setDefaultsOnInsert: true };
@@ -70,6 +102,16 @@ app.put("/cart", async (req, res) => {
         else {
             res.json("");
         }
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+app.get("/cart", async (req, res) => {
+    try {
+        console.log("RequestdId", req.query.userIdParams)
+        let data = res.json(await Cart.find({ user: req.query.userIdParams }))
+        console.log("getCartData", data)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -99,23 +141,7 @@ app.put("/wishlist", async (req, res) => {
     }
 })
 
-// // Cart
-// app.get("/cart", async (req, res) => {
-//     try {
-//         res.json(await User.find({ user: req.query.userId }))
-//     } catch (error) {
-//         res.status(400).json(error)
-//     }
-// })
 
-// // Wishlist
-// app.get("/wishlist", async (req, res) => {
-//     try {
-//         res.json(await Wishlist.find({ user: 'session id' }))
-//     } catch (error) {
-//         res.status(400).json(error)
-//     }
-// })
 
 // Reviews
 app.get("/product/reviews", async (req, res) => {
@@ -132,6 +158,15 @@ app.post("/user/order", async (req, res) => {
         res.json(await Order.create(req.body))
     } catch (error) {
         res.status(400).json(error);
+    }
+})
+
+app.get("/user/order", async (req, res) => {
+    try {
+        let data = res.json(await Order.find({ emailId: req.query.emailParams }))
+        console.log(data)
+    } catch (error) {
+        res.status(400).json(error)
     }
 })
 

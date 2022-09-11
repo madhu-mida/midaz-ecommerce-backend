@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const orderSchema = new Schema({
-    userId: String,
+    orderId: String,
+    emailId: String,
     products: Array,
     orderDate: Date,
     orderTotal: Number,
